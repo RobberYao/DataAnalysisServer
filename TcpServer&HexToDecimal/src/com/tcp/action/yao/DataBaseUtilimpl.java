@@ -1,6 +1,5 @@
 package com.tcp.action.yao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,10 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 public class DataBaseUtilimpl implements DataBaseUtil {
 
@@ -31,7 +26,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	public static void main(String[] args) {
 		DataBaseUtilimpl dbBaseUtilimpl = new DataBaseUtilimpl();
 		// System.out.println(dbBaseUtilimpl.findModifyNameByInputProbNum("wn02"));
-		// dbBaseUtilimpl.insertNewTableIntoLab_disprobenumber("wn02");
+		dbBaseUtilimpl.getAvgTemperatureByCreatedon("lab_inputparamter0101", "2017-05-14 11:59:00");
 		// dbBaseUtilimpl.findDisplayProbeNumberByInputProbNum("wn01");
 		Connection conn = getConn();
 
@@ -50,7 +45,8 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			conn = (Connection) DriverManager.getConnection(URL, USER, PASSWORD);
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("Connection Mysql: " + Float.toString(seconds) + " seconds.");
+			// System.out.println("Connection Mysql: " + Float.toString(seconds)
+			// + " seconds.");
 		} catch (ClassNotFoundException e) {
 			System.out.println("连接错误");
 			e.printStackTrace();
@@ -71,7 +67,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 */
 	@Override
 	public ArrayList<String> quaryByParamter(String tableName, String startTime, String endTime) {
-		//System.out.println("Start quaryByParamter...");
+		// System.out.println("Start quaryByParamter...");
 		ArrayList<String> rslist = new ArrayList();
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 
@@ -104,7 +100,8 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("QuaryTable" + tableName + " Cost: " + Float.toString(seconds) + " seconds.");
+			// System.out.println("QuaryTable" + tableName + " Cost: " +
+			// Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -122,7 +119,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 */
 	@Override
 	public void insertTable(String tableName, String probNum, String createdon, String temperature, String humidity) {
-		//System.out.println("Start insertTable");
+		// System.out.println("Start insertTable");
 		String sql = "";
 		try {
 			if (tableName == null) {
@@ -130,7 +127,8 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			}
 			long checkstartTime = System.currentTimeMillis();// 开始计时
 			// 匹配显示表与原数据表
-			sql = "INSERT  INTO " + tableName+ "(INPUTPROBENUMBER,CREATEDON,INPUTTEMPERATURE,INPUTHUMIDITY) VALUES (?,?,?,?);";
+			sql = "INSERT  INTO " + tableName
+					+ "(INPUTPROBENUMBER,CREATEDON,INPUTTEMPERATURE,INPUTHUMIDITY) VALUES (?,?,?,?);";
 			Connection conn = getConn();
 			PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setString(1, probNum);
@@ -139,13 +137,14 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			pst.setString(4, humidity);
 			int rs1 = pst.executeUpdate();
 			if (rs1 != 0) {
-				//System.out.println("Success insert " + tableName);
+				// System.out.println("Success insert " + tableName);
 			}
 			pst.close();
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("-----insertTable " + tableName + " cost: " + Float.toString(seconds) + " seconds.");
+			// System.out.println("-----insertTable " + tableName + " cost: " +
+			// Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (LabRunTimeException e) {
@@ -162,7 +161,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 */
 	@Override
 	public String findDisplayProbeNumberByInputProbNum(String inputProbNum) {
-		//System.out.println("Start findDisplayProbeNumberByProbNum");
+		// System.out.println("Start findDisplayProbeNumberByProbNum");
 		String displayprobenum = null;
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		// 入参检查，非空判断
@@ -185,8 +184,9 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println(
-				//	"-----FindDisProbeNumber " + displayprobenum + " " + Float.toString(seconds) + " seconds.");
+			// System.out.println(
+			// "-----FindDisProbeNumber " + displayprobenum + " " +
+			// Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (LabRunTimeException e) {
@@ -203,7 +203,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 */
 	@Override
 	public String findDisplayTableNameByInputProbNum(String inputProbNum) {
-		//System.out.println("Start findDisplayProbeNumberByProbNum");
+		// System.out.println("Start findDisplayProbeNumberByProbNum");
 		String displayTableName = null;
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		// 入参检查，非空判断
@@ -226,8 +226,9 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println(
-				//	"-----FindDisplayTableName: " + displayTableName + " " + Float.toString(seconds) + " seconds.");
+			// System.out.println(
+			// "-----FindDisplayTableName: " + displayTableName + " " +
+			// Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (LabRunTimeException e) {
@@ -244,7 +245,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 */
 	@Override
 	public String findInputTableNameByInputProbNum(String inputProbNum) {
-		//System.out.println("Start findInputTableNameByInputProbNum");
+		// System.out.println("Start findInputTableNameByInputProbNum");
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		String InputTableName = null;
 		// 入参检查，非空判断
@@ -267,7 +268,8 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("-----FindInputTableName " + inputProbNum + " " + Float.toString(seconds) + " seconds.");
+			// System.out.println("-----FindInputTableName " + inputProbNum + "
+			// " + Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (LabRunTimeException e) {
@@ -283,7 +285,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 * @return
 	 */
 	public List findModifyNameByInputProbNum(String inputProbNum) {
-		//System.out.println("Start findModifyNameByInputProbNum");
+		// System.out.println("Start findModifyNameByInputProbNum");
 		String InputTableName = null;
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		List list = new ArrayList();
@@ -308,7 +310,8 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("-----FindModifyName by " + inputProbNum + " " + Float.toString(seconds) + " seconds.");
+			// System.out.println("-----FindModifyName by " + inputProbNum + " "
+			// + Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -382,15 +385,15 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 * 
 	 */
 	@Override
-	public void insertDisplayTable(String tableName,String inputTabName, String probNum, String createdon, String temperature,
-			String humidity, List<Map<String, Double>> modify) {
-		//System.out.println("Start insertDisplayTable");
+	public void insertDisplayTable(String tableName, String inputTabName, String probNum, String createdon,
+			String temperature, String humidity, List<Map<String, Double>> modify) {
+		// System.out.println("Start insertDisplayTable");
 		Double modifyhum;
 		Double modifytemp;
-		String temperatureAfterModify ="";
+		String temperatureAfterModify = "";
 		String humidityAfterModify = "";
 		try {
-			
+
 			long checkstartTime = System.currentTimeMillis();// 开始计时
 			if (tableName == null) {
 				throw new LabRunTimeException("表名为空 抛异常");
@@ -405,37 +408,37 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 				humidityAfterModify = DoubleTest.getDoubleToStringValueByBigDecimalAdd(modifyhum,
 						Double.parseDouble(humidity));
 			}
-			String sql = "INSERT  INTO " + tableName+ "(INPUTPROBENUMBER,DISPROBENUMBER,CREATEDON,DISTEMPERATURE,DISHUMIDITY) VALUES (?,?,?,?,?);";
+			String sql = "INSERT  INTO " + tableName
+					+ "(INPUTPROBENUMBER,DISPROBENUMBER,CREATEDON,DISTEMPERATURE,DISHUMIDITY) VALUES (?,?,?,?,?);";
 			Connection conn = getConn();
 			PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setString(1, inputTabName);
 			pst.setString(2, probNum);
 			pst.setString(3, createdon);
-			pst.setString(4, temperature);
-			pst.setString(5, humidity);
+			pst.setString(4, temperatureAfterModify);
+			pst.setString(5, humidityAfterModify);
 			int rs1 = pst.executeUpdate();
 			if (rs1 != 0) {
-				//System.out.println("Success insert " + tableName);
+				// System.out.println("Success insert " + tableName);
 			}
 			pst.close();
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("-----insertTable " + tableName + " cost: " + Float.toString(seconds) + " seconds.");
+			// System.out.println("-----insertTable " + tableName + " cost: " +
+			// Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (LabRunTimeException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		//insertTable(tableName,inputTabName, probNum, createdon, temperatureAfterModify, humidityAfterModify);
+
+		// insertTable(tableName,inputTabName, probNum, createdon,
+		// temperatureAfterModify, humidityAfterModify);
 	}
 
 	public void insertNewTableIntoLab_disprobenumber(String inputProbNum) {
-		//System.out.println("Start findDisplayProbeNumberByProbNum");
+		// System.out.println("Start findDisplayProbeNumberByProbNum");
 		String InputTableName = null;
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		// 入参检查，非空判断
@@ -458,7 +461,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println(Float.toString(seconds) + " seconds.");
+			// System.out.println(Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -495,7 +498,7 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 */
 	@Override
 	public void insertSumInputTable(String probNum, String createdon, String temperature, String humidity) {
-		//System.out.println("Start insertSumInputTable");
+		// System.out.println("Start insertSumInputTable");
 		String sql = "";
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		// 匹配显示表与原数据表
@@ -509,13 +512,14 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			pst.setString(4, humidity);
 			int rs1 = pst.executeUpdate();
 			if (rs1 != 0) {
-				//System.out.println("Success insertSumInputTable ");
+				// System.out.println("Success insertSumInputTable ");
 			}
 			pst.close();
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("-----insertSumInputTable cost: " + Float.toString(seconds) + " seconds.");
+			// System.out.println("-----insertSumInputTable cost: " +
+			// Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -532,9 +536,9 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 	 * @return
 	 */
 	@Override
-	public void insertSumDisplayTable(String inputTabName,String probNum, String createdon, String temperature, String humidity,
-			List<Map<String, Double>> modify) {
-		//System.out.println("Start insertSumDisplayTable");
+	public void insertSumDisplayTable(String inputTabName, String probNum, String createdon, String temperature,
+			String humidity, List<Map<String, Double>> modify) {
+		// System.out.println("Start insertSumDisplayTable");
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		String sql = "";
 		// 匹配显示表与原数据表
@@ -564,15 +568,61 @@ public class DataBaseUtilimpl implements DataBaseUtil {
 			pst.setString(5, humidityAfterModify);
 			int rs1 = pst.executeUpdate();
 			if (rs1 != 0) {
-				//System.out.println("Success insertSumDisplayTable ");
+				// System.out.println("Success insertSumDisplayTable ");
 			}
 			pst.close();
 			conn.close();
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
-			//System.out.println("-----insertSumInputTable cost: " + Float.toString(seconds) + " seconds.");
+			// System.out.println("-----insertSumInputTable cost: " +
+			// Float.toString(seconds) + " seconds.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * 传入原始数据表，获取该表内10秒（默认）内所有温度数据的平均值
+	 */
+	@Override
+	public String getAvgTemperatureByCreatedon(String inputProbNum, String createdOn) {
+		long checkstartTime = System.currentTimeMillis();// 开始计时
+		String rsl = null;
+		String sql = "select AVG(INPUTTEMPERATURE) from " + inputProbNum + " where DATE_SUB('" + createdOn
+				+ "',INTERVAL 10 SECOND ) < CREATEDON";
+		try {
+			Connection conn = getConn();
+			PreparedStatement pst = conn.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				rsl = rs.getString(1);
+				//System.out.println("==========  " + rsl + "  ==========");
+			}
+			rs.close();
+			pst.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		long checkendTime = System.currentTimeMillis();// 计时结束
+		float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
+		System.out.println(" Cost: " + Float.toString(seconds) + " seconds.");
+		return rsl;
+	}
+
+	/**
+	 * 数据优化：如果有平均值 则返回平均值 平均值为null 返回实际温度
+	 */
+	@Override
+	public String OptimizedTemp(String temperature, String avgTemperature) {
+		// 如果平均值不为Null 则返回平均值 反之返回实际温度
+		if (avgTemperature != null) {
+			System.out.println("==============================平均avg :"+avgTemperature);
+			return avgTemperature;
+		}
+		
+		//System.out.println("==============================平均avg : null");
+		return temperature;
+	}
+
 }

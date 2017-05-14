@@ -8,16 +8,26 @@ import java.util.Map;
 public class Function {
 	DataBaseUtilimpl dBaseUtilimpl = new DataBaseUtilimpl();
 	private final double tempCheck = -10.00;
-	private final double humCheck =10.00;
+	private final double humCheck = 10.00;
 
 	public static void main(String[] args) {
 		Function function = new Function();
-		for (int i = 0; i < 1; i++) {
-			String str = "+YAV:0005AABB" + ",000 000 000 007 001 " + ",000 000 000 007 001 " + ",007 001 007 000 000 "
-					+ ",009 001 008 000 000 " + ",000 000 004 000 000 " + ",004 000 008 001 003 "
-					+ ",001 005 004 000 002 " + ",008 00C 00B 008 008 " + ",0 0,0 0,0 0 0 0,00"
+		for (int i = 0; i < 10; i++) {
+			String str = "+YAV:0005AABB" + ",820 000 000 007 001 " + ",820 000 000 007 001 " + ",000 001 007 000 000 "
+					+ ",000 001 008 000 000 " + ",000 000 004 000 000 " + ",000 000 008 001 003 "
+					+ ",000 005 004 000 002 " + ",000 00C 00B 008 008 " + ",0 0,0 0,0 0 0 0,00"
 					+ ",FF0203FF,V V V V V V V V" + ",8AD00001,X,EEFF";
 			function.loadParamBySCM(str);
+			String str1 = "+YAV:0005AABB" + ",822 000 000 007 001 " + ",920 000 000 007 001 " + ",000 001 007 000 000 "
+					+ ",000 001 008 000 000 " + ",000 000 004 000 000 " + ",000 000 008 001 003 "
+					+ ",000 005 004 000 002 " + ",000 00C 00B 008 008 " + ",0 0,0 0,0 0 0 0,00"
+					+ ",FF0203FF,V V V V V V V V" + ",8AD00001,X,EEFF";
+			function.loadParamBySCM(str1);
+			String str2 = "+YAV:0005AABB" + ",821 000 000 007 001 " + ",990 000 000 007 001 " + ",000 001 007 000 000 "
+					+ ",000 001 008 000 000 " + ",000 000 004 000 000 " + ",000 000 008 001 003 "
+					+ ",000 005 004 000 002 " + ",000 00C 00B 008 008 " + ",0 0,0 0,0 0 0 0,00"
+					+ ",FF0203FF,V V V V V V V V" + ",8AD00001,X,EEFF";
+			function.loadParamBySCM(str2);
 		}
 	}
 
@@ -27,11 +37,13 @@ public class Function {
 	 * @param str
 	 */
 	public void loadParamBySCM(String str) {
-		//System.out.println("-----Start LoadParamBySCM-----");
+		// System.out.println("-----Start LoadParamBySCM-----");
 		long checkstartTime = System.currentTimeMillis();// 开始计时
 		String inputProbeId = "";// 板号+端口号
 		String createdon = "";// 采集时间（单片机端）
 		String temperature = "";// 采集温度
+		String avgTemprature = "";// 平均温度
+		String displayTemprature = "";// 显示数据温度
 		String humidity = "";// 采集湿度
 		String displayProbeId = "";// 探头编号（客户定制）
 		String displayTabName = "";// 显示表名
@@ -55,13 +67,19 @@ public class Function {
 				displayProbeId = dBaseUtilimpl.findDisplayProbeNumberByInputProbNum(inputProbeId);
 				// 查找该探头的校准值
 				listmodify = dBaseUtilimpl.findModifyNameByInputProbNum(inputProbeId);
+
 				if (Double.valueOf(temperature) > tempCheck && Double.valueOf(humidity) > humCheck) {
-					System.out.println("\n" + inputProbeId + "   " + createdon + "   " + temperature + "   " + humidity);
+					System.out.println(displayTabName + " 优化==== 原始 ："+temperature +"  ==> 显示：" + displayTemprature);
+					System.out
+							.println("\n" + inputProbeId + "   " + createdon + "   " + temperature + "   " + humidity);
 					// 写入原数据表
 					dBaseUtilimpl.insertTable(inputTabName, inputProbeId, createdon, temperature, humidity);
+					// AVG for Temperture
+					avgTemprature = dBaseUtilimpl.getAvgTemperatureByCreatedon(inputTabName, createdon);
+					displayTemprature = dBaseUtilimpl.OptimizedTemp(temperature, avgTemprature);
 					// 写入显示数据表
 					dBaseUtilimpl.insertDisplayTable(displayTabName, inputProbeId, displayProbeId, createdon,
-							temperature, humidity, listmodify);
+							displayTemprature, humidity, listmodify);
 					// 写入原始数据汇总表
 					dBaseUtilimpl.insertSumInputTable(inputProbeId, createdon, temperature, humidity);
 					// 写入显示数据汇总表
@@ -69,7 +87,6 @@ public class Function {
 							listmodify);
 				}
 			}
-
 			long checkendTime = System.currentTimeMillis();// 计时结束
 			float seconds = (checkendTime - checkstartTime) / 1000F;// 计算耗时
 			System.out.println("插入数据完毕耗时： " + Float.toString(seconds) + " seconds.");
