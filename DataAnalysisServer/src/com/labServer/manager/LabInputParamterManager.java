@@ -10,8 +10,6 @@ public interface LabInputParamterManager {
 
 	void addListItemsToSumInput( List<LabInputParamter> list);
 
-	void addListItemsToDiffInput(List<LabInputParamter> list);
-
 	Double getAVGInputTemperatureByCreatedOn(LabInputParamter labInputParamter, String inputTable);
 
 	Double OptimizedTemp(Double temperature, Double avgTemperature);

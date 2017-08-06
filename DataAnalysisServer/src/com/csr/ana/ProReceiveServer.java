@@ -16,58 +16,57 @@ import server.threadgroup.ThreadPoolGroupServer;
 
 public class ProReceiveServer extends BasicServer {
 	private long count = 0;
-	
+
 	BlockingQueue<String> reciverQueue = new LinkedBlockingDeque<>();
 	BlockingQueue<LabDisplayParamter> displayQueue = new LinkedBlockingQueue<>();
 	BlockingQueue<LabInputParamter> inputQueue = new LinkedBlockingQueue<>();
 
-	
 	// 端口号808、IP地址默认为本地127.0.0.1
 	DatagramPacket packet = null;
 
 	public boolean startServer() {
-	
+
 		String log_dir = null;
 		try {
 			log_dir = this.getStringPara("log_dir");
 			DatagramSocket socket = new DatagramSocket(808);//
-			System.out.println(log_dir);	
-			
-			UdpReciverFor400 task1=new UdpReciverFor400(reciverQueue,socket,packet) ; 
-			
-			 
-		FleetyTimerTask task2=new FleetyTimerTask() {
+			System.out.println(log_dir);
+
+			UdpReciverFor400 reciver1 = new UdpReciverFor400(reciverQueue, socket, packet);
+			Parse parse1 = new Parse(reciverQueue, displayQueue, inputQueue);
+			//Storage storage1 = new Storage(displayQueue, inputQueue);
+
+			FleetyTimerTask task2 = new FleetyTimerTask() {
 				@Override
 				public void run() {
-					while(true){
-						System.out.println("task22");
-						try {
-							Thread.sleep(2000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}		
-				}
-			};
-		FleetyTimerTask task3=new FleetyTimerTask() {
-				@Override
-				public void run() {
-					while(true){
-						System.out.println("task33");
+					while (true) {
+
+						System.out.println("task22=============");
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}		
+					}
 				}
-			};	
-			TimerPool pool=ThreadPoolGroupServer.getSingleInstance().createTimerPool("user_data_get", 5);
-			pool.schedule(task1, 0);
+			};
+			FleetyTimerTask task3 = new FleetyTimerTask() {
+				@Override
+				public void run() {
+					while (true) {
+						System.out.println("task33---------------");
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			};
+			TimerPool pool = ThreadPoolGroupServer.getSingleInstance().createTimerPool("user_data_get", 5);
 			pool.schedule(task2, 0);
-			pool.schedule(task3, 0);			
+			pool.schedule(task3, 0);
+			//pool.schedule(storage1, 0);
 			this.isRunning = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,8 +75,8 @@ public class ProReceiveServer extends BasicServer {
 		return this.isRunning();
 	}
 
-	public void stopServer() {	
+	public void stopServer() {
 		super.stopServer();
-	}	
-	
+	}
+
 }

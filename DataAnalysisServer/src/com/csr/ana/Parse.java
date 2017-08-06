@@ -1,12 +1,9 @@
 package com.csr.ana;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-
-
+import com.fleety.util.pool.timer.FleetyTimerTask;
 import com.labServer.manager.LabDisplayParamterManager;
 import com.labServer.manager.LabDisplayParamterManagerImpl;
 import com.labServer.manager.LabDisprobeNumberManager;
@@ -22,19 +19,19 @@ import com.labServer.model.LabModify;
 import com.labServer.util.RegexUtil;
 import com.labServer.util.SCMUtil;
 
-public class Parse implements Runnable {
+public class Parse extends FleetyTimerTask{
 	
 	private BlockingQueue<String> reciverQueue;
 	private BlockingQueue<LabDisplayParamter> displayQueue;
 	private BlockingQueue<LabInputParamter> inputQueue;
 	private LabInputParamterManager labInputParamterManager = new LabInputParamterManagerImpl();
 	private LabDisplayParamterManager labDisplayParamterManager = new LabDisplayParamterManagerImpl();
-	// 查找配置信息(预加�?.
+	// 查找配置信息
 	private LabModifyManager labModifyManager = new LabModifyManagerImpl();
 	private static LabDisprobeNumberManager labDisprobeNumberManager = new LabDisprobeNumberManagerImpl();
-	private static Map<String, LabDisprobeNumber> labDisprobeNumber = labDisprobeNumberManager.getSumDisprobeNumber();// 显示数据实例
-	// 查找该探头的校准�?预加�?
-	Map<String, LabModify> modifys = labModifyManager.getSumLabModify();
+	private static Map<String, LabDisprobeNumber> labDisprobeNumber = labDisprobeNumberManager.resultSetToListFromDisProbe();// 显示数据实例
+	// 查找该探头的校准
+	Map<String, LabModify> modifys = labModifyManager.resultSetToMapFromModify();
 
 	private static int resetInit = 0;// 定时刷新预加载信�?
 	private final double tempCheck = -25.00;// 设置25摄氏度为�?��采集温度
@@ -114,8 +111,8 @@ public class Parse implements Runnable {
 	 */
 	private void init() {
 		resetInit = 0;
-		labDisprobeNumber = labDisprobeNumberManager.getSumDisprobeNumber();// 显示数据实例
-		modifys = labModifyManager.getSumLabModify();
+		labDisprobeNumber = labDisprobeNumberManager.resultSetToListFromDisProbe();// 显示数据实例
+		modifys = labModifyManager.resultSetToMapFromModify();
 		System.out.println("初始化数据。。。");
 	}
 

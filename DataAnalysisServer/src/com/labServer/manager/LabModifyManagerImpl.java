@@ -1,58 +1,51 @@
 package com.labServer.manager;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
-
-import com.labServer.mapping.LabModifyMapper;
+import com.labServer.dao.LabModifyDaoImpl;
 import com.labServer.model.LabModify;
-import com.labServer.util.MyBatisUtil;
 
 public class LabModifyManagerImpl implements LabModifyManager {
 
-	/**
-	 * 通过原探头名找到探头校正实例(不用)
-	 * 
-	 * @param inputProbreNumber
-	 * @return
-	 */
-	public List<Map<String, Double>> getLabModifyByInputProbNum(String inputProbreNumber) {
-		SqlSession sqlSession = MyBatisUtil.getSqlSession();
-		LabModifyMapper mapper = sqlSession.getMapper(LabModifyMapper.class);
-		List<LabModify> labModifys = mapper.getLabModifyByInputProbNum(inputProbreNumber);
-		List<Map<String, Double>> modify = new ArrayList<Map<String, Double>>();
-		sqlSession.commit();
-		sqlSession.close();
-		HashMap<String, Double> modifyMap = new HashMap<String, Double>();
-		for (LabModify labModify : labModifys) {
-			// modifyMap.put(labModify.getModifyParamter(),
-			// labModify.getModifyNumber());
-			modify.add(modifyMap);
-		}
-		return modify;
-	}
+	LabModifyDaoImpl labModifyDaoImpl = new LabModifyDaoImpl();
 
 	/**
 	 * 获取校准值表所有数据（现用）
 	 *
-	 * getSumLabModify
-	 * 
-	 * @see com.labServer.manager.LabModifyManager#getSumLabModify()
 	 *
 	 */
-	public Map<String, LabModify> getSumLabModify() {
-		SqlSession sqlSession = MyBatisUtil.getSqlSession();
-		LabModifyMapper mapper = sqlSession.getMapper(LabModifyMapper.class);
-		List<LabModify> labModifys = mapper.getSumLabModify();
-		sqlSession.commit();
-		sqlSession.close();
-		Map<String, LabModify> modifyMaps = new HashMap<String, LabModify>();
-		for (LabModify labModify : labModifys) {
-			modifyMaps.put(labModify.getInputProbeNumber(), labModify);
+	public Map<String, LabModify> resultSetToMapFromModify() {
+		ResultSet rs = labModifyDaoImpl.findLabModify();
+
+		Map<String, LabModify> modMap = new HashMap<String, LabModify>();
+		ResultSetMetaData md;
+		if (rs == null)
+			return Collections.EMPTY_MAP;
+		try {
+			md = rs.getMetaData();
+			int columnCount = md.getColumnCount(); // 返回此 ResultSet 对象中的列数
+			// 得到结果集(rs)的结构信息，比如字段数、字段名等
+			while (rs.next()) {
+				LabModify lm = new LabModify();
+				for (int i = 0; i <= columnCount; i++) {
+					lm.setInputProbeNumber(rs.getObject("inputProbeNumber").toString());
+					lm.setDisProbeNumber(rs.getObject("disProbeNumber").toString());
+					lm.setModifyTemp(rs.getDouble("modifyTemp"));
+					lm.setModifyHum(rs.getDouble("modifyHum"));
+				}
+				modMap.put(lm.getInputProbeNumber(), lm);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		return modifyMaps;
+		return modMap;
 	}
+
 }

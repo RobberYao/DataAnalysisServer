@@ -3,6 +3,8 @@ package com.csr.ana;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+
+import com.fleety.util.pool.timer.FleetyTimerTask;
 import com.labServer.manager.LabDisplayParamterManager;
 import com.labServer.manager.LabDisplayParamterManagerImpl;
 import com.labServer.manager.LabInputParamterManager;
@@ -10,7 +12,7 @@ import com.labServer.manager.LabInputParamterManagerImpl;
 import com.labServer.model.LabDisplayParamter;
 import com.labServer.model.LabInputParamter;
 
-public class Storage implements Runnable {
+public class Storage extends FleetyTimerTask{
 
 	private BlockingQueue<LabDisplayParamter> displayQueue;
 	private BlockingQueue<LabInputParamter> inputQueue;
